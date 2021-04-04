@@ -1,0 +1,23 @@
+.img-container{
+	position: relative;
+	display: inline-block;
+}
+
+.overlay-top-right{
+	position: absolute;
+	top: 16px;
+	right: 24px;
+}
+
+ .read-more > a{
+	color: lightblue;
+	text-decoration: none;
+}
+
+.read-more > a:hover {
+	color: white;
+}
+
+th, td {
+	padding-right: 20px;
+}
