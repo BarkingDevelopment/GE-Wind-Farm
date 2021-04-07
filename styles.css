@@ -1,15 +1,28 @@
-.img-container{
+div.no-select {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.play-area {
+	margin-top: 20px; 
+	height: 500px; 
+	width: 700px;
+}
+
+.img-container {
 	position: relative;
 	display: inline-block;
 }
 
-.overlay-top-right{
+.overlay-top-right {
 	position: absolute;
 	top: 16px;
 	right: 24px;
 }
 
- .read-more > a{
+.read-more > a{
 	color: lightblue;
 	text-decoration: none;
 }
@@ -20,4 +33,54 @@
 
 th, td {
 	padding-right: 20px;
+}
+
+.horizontal-scroll {
+	display: inline-block;
+	white-space: nowrap;
+	padding-left: 105%;
+	animation: floatText 10s infinite linear;
+}
+
+.modal-container {
+	height: 100%;  
+	width: 100%;
+	position: absolute;
+	z-index: 10;
+	top: 0;
+	left: 0;
+	padding: 20px;
+	background-color: rgba(0, 0, 0, 0.9);
+	pointer-events: auto;
+}
+
+.horizontal-scroll:hover {
+	animation-play-state: paused;
+}
+
+@keyframes floatText {
+	to {
+		transform: translateX(-110%);
+	}
+}
+
+.success-pulse {
+	color: green;
+	animation: pulse 2s;
+}
+
+.caution-pulse {
+	color: orange;
+	animation: pulse 2s;
+}
+
+.error-pulse {
+	color: red;
+	animation: pulse 2s;
+}
+
+@keyframes pulse {
+	100% {
+		color: black;
+	}
 }

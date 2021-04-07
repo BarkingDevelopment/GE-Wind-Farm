@@ -4,171 +4,47 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-        <script src="https://kit.fontawesome.com/e2fdd2cd81.js" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="windFarmLogic.js"></script>
 
         <title>GE Windfarm Simulator</title> 
-
-        <style>
-            div.no-select {
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-            }
-
-            .img-container {
-                position: relative;
-                display: inline-block;
-            }
-
-            .overlay-top-right {
-                position: absolute;
-                top: 16px;
-                right: 24px;
-            }
-
-            .read-more > a{
-                color: lightblue;
-                text-decoration: none;
-            }
-
-            .read-more > a:hover {
-                color: white;
-            }
-
-            th, td {
-                padding-right: 20px;
-            }
-
-            .horizontal-scroll {
-                display: inline-block;
-                white-space: nowrap;
-                padding-left: 105%;
-                animation: floatText 10s infinite linear;
-            }
-
-            .event-info-container {
-                height: 100%;  
-                width: 100%;
-                position: absolute;
-                z-index: 10;
-                top: 0;
-                left: 0;
-                padding: 20px;
-                background-color: rgba(0, 0, 0, 0.9);
-                pointer-events: auto;
-            }
-
-            .horizontal-scroll:hover {
-                animation-play-state: paused;
-            }
-
-            @keyframes floatText {
-                to {
-                    transform: translateX(-110%);
-                }
-            }
-        </style>
     </head>
  
     <body style="background-color: black;"> 
-        <div class="container bg-light no-select" style="margin-top: 20px; height: 500px; width: 740px;">             
-            <div class="modal fade" id="instructions" tabindex="-1" role="dialog">
-                <div class="modal-dialog modal-dialog-scrollable" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" >Modal title</h5>
-                            <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                        </div>
-
-                        <div class="modal-body"  id="modal-container-content">
-                            <p>Modal body text goes here.</p>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
+        <div class="container bg-light no-select play-area">      
+            <div class="modal-container" id="instructionsContainer">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="m-0 d-inline">Instructions</h5>
+                        <button type="button" class="btn-close float-end"  onclick="gameManager.hideInstructions();" aria-label="Close"></button>
                     </div>
-                </div>
-            </div>  
+
+                    <div class="card-body">
+                        <h5 class="card-title">How to play</h5>
+                        <p class="card-text">Wind turbines use the power of the wind to create electricity! Giant blades convert the wind into a rotational kinetic energy that turn a generator; it's that simple!</p>
+                        <p class="card-text">The objective of the game is to generate as much clean electricity as possible, and use it to buy upgrads to your wind farm. Start generating Watts by clicking the turbine.</p>
+                        <a href="#" class="btn btn-primary" onclick="gameManager.hideInstructions();">Close</a>
+                    </div>
+                  </div>
+            </div>
 
             <div class="row">
                 <div class="col-7">
-                    <div class="row position-relative" style="height: 80%;">
-                        <div class="col">
-
-                            <div class="event-info-container hidden" id="eventInfoContainer">
-                                <div class="card" >
-                                    <div class="card-header">
-                                        <h5 class="m-0 d-inline">Event Info</h5>
-                                        <button type="button" class="btn-close float-end"  onclick="$('#eventInfoContainer').hide();" aria-label="Close"></button>
-                                    </div>
-
-                                    <div class="card-body">
-                                        <h5 class="card-title" id="eventName">Special title treatment</h5>
-                                        <p class="card-text" id="eventDescription">With supporting text below as a natural lead-in to additional content.</p>
-                                        <a href="#" class="btn btn-primary" onclick="$('#eventInfoContainer').hide();">Close</a>
-                                    </div>
-                                  </div>
-                            </div>
-
-                            <div class="row align-items-center" style="height: 85%;">
-                                <div class="col">
-                                    <button class="btn btn-outline-primary rounded-circle overlay-top-right" type="button" data-toggle="modal" data-target="#instructions"><i class="fas fa-question"></i></button>
-                                    
-                                    <!-- Play Area-->
-                                    <div class="fa-10x text-center">
-                                        <i class="fas fa-fan" onclick='console.log("clicked");'></i>                                     
-                                    </div>
-                                    
-                                </div>
-                            </div>
-
-                            <div class="row align-items-center" style="height: 15%;">
-                                <div class="col">
-                                    <!-- Events -->
-                                    <div class="input-group">                                
-                                        <div class="form-control overflow-hidden">
-                                            <div class="horizontal-scroll" id="eventShortDescription"> 
-                                                This is an example event. Hopefully it clips properly.
-                                            </div>
-                                        </div>
-                                        <button class="btn btn-outline-secondary" type="button" onclick="$('#eventInfoContainer').show();"><i class="fas fa-flag px-2"></i>Read More</button>
-                                    </div> 
-                                </div>
-                            </div>                          
-                        </div>
+                    <div class="row position-relative justify-content-center align-items-center" style="height: 80%;">                        
+                        <div class="col text-center">
+                            <button class="btn btn-outline-primary rounded-circle overlay-top-right" type="button" onclick="gameManager.showInstructions();"><i class="fas fa-question"></i></button>
+                            <!-- Play Area-->                            
+                            <i class="fas fa-fan fa-10x" onclick='gameManager.clickIncome()'></i>                                     
+                        </div>                            
                     </div>
 
                     <div class="row bg-secondary align-items-center" style="height: 20%;">
-                        <div class="col">
-                            <!-- Stats and facts-->
-                            <div class="card">
-                                <div class="card-body">
-                                    <table>
-                                        <tr>
-                                            <th>On-shore MW</th>
-                                            <td><span>10</span></td>                                            
-                                        </tr>
-                                        <tr>
-                                            <th>On-shore MW</th>
-                                            <td><span>2</span></td>
-                                        </tr>
-                                    </table>
-                                </div>
-                              </div>
-                        </div>
-
                         <div class="col-5">
                             <div class="row row-cols-1 gy-3">
                                 <div class="col">
                                     <!-- Money -->
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-car-battery" title="Energy Stored"></i></span>
-                                        <span class="form-control"><span id="bank">50 GW</span></span>
+                                        <span class="form-control"><span id="bank">0W</span> /  <span id="capacityStat">10</span>W</span>                                        
                                     </div>                                    
                                 </div>
 
@@ -176,7 +52,7 @@
                                     <!--  Income -->
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-bolt" title="Energy Generating"></i></i></span>
-                                        <span class="form-control text-success">+<span id="income">50 MW</span></span>
+                                        <span class="form-control"><span id="income">0W</span>
                                     </div>
                                 </div>
                             </div>
@@ -198,66 +74,66 @@
                                 <div class="card-header">
                                     
                                     <button class="btn w-100 text-start" type="button" data-toggle="collapse" data-target="#upgradesContent" aria-expanded="true" aria-controls="upgradesContent">
-                                        <h5 class="d-inline">Upgrades <i class="fas fa-angle-double-down py-1" style="float:right"></i></h5>                                        
+                                        <h5 class="d-inline">Upgrades</h5>                                        
                                     </button>
                                 </div>
 
-                                <ul class="list-group list-group-flush collapse" id="upgradesContent" data-parent="#upgradesContentHeader">
+                                <ul class="list-group list-group-flush" id="upgradesContent" data-parent="#upgradesContentHeader">
                                     <li class="list-group-item card">
-                                        <div class="image-container">
-                                            <span class="badge rounded-pill bg-primary overlay-top-right read-more">
-                                                <a class="" title="Read more about the GE 2MW series" href="https://www.ge.com/renewableenergy/wind-energy/onshore-wind/2mw-platform" target="_blank">?</a>
-                                            </span>
+                                        <div class="image-container">                                    
                                             <img src="https://www.ge.com/renewableenergy/sites/default/files/2020-02/wind-onshore-2.75-120-wind-turbines-emsdetten-germany-3000px.jpg" class="card-img-top" alt="...">
                                         </div>
 
                                         <div class="card-body">
-                                            <h5 class="card-title">GE 2.3 - 116</h5>
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                            <h5 class="card-title">Watts per Click</h5>
+                                            <p class="card-text">Turbines produce a set amount of watts per revolution. Increase the amount of energy produced when clicking your turbine.</p>
 
+                                            <div>
+                                                <p></p><strong>Price:</strong> <span id="wattPrice">10</span>W</p>
+                                                <p><strong>Generator Efficiency:</strong> <span id="wattStat">10</span>W / click</p>
+                                            </div>
                                             <div class="input-group mb-3">
-                                                <span class="form-control text-center"></span>
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-plus-circle"></i></button>
+                                                <span class="form-control text-center" id="wattLevel">1</span>
+                                                <button class="btn btn-primary" type="button" onclick="gameManager.incomeManager.buyUpgrade(0)"><i class="fas fa-plus"></i> Buy</button>
                                             </div>
                                         </div>
                                     </li>
 
                                     <li class="list-group-item card">
                                         <div class="image-container">
-                                            <span class="badge rounded-pill bg-primary overlay-top-right read-more">
-                                                <a class="" title="Read more about the GE 3MW series" href="https://www.ge.com/renewableenergy/wind-energy/onshore-wind/2mw-platform" target="_blank">?</a>
-                                            </span>
                                             <img src="https://www.ge.com/renewableenergy/sites/default/files/2020-02/wind-onshore-meikle-3000px.jpg" class="card-img-top" alt="...">
                                         </div>
 
                                         <div class="card-body">
-                                            <h5 class="card-title">GE 3.6 - 137</h5>
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                            <h5 class="card-title">Generator Efficiency</h5>
+                                            <p class="card-text">Generators are never 100% effective in converting kinetic energy to electricity as they produce heat from ficton. Upgrading this means you get more energy from your clicks and turbines!</p>
 
+                                            <div>
+                                                <p></p><strong>Price:</strong> <span id="efficiencyPrice">10</span>W</p>
+                                                <p><strong>Generator Efficiency:</strong> <span id="efficiencyStat">10</span>x</p>
+                                            </div>
                                             <div class="input-group mb-3">
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-minus-circle"></i></button>
-                                                <span class="form-control text-center"></span>
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-plus-circle"></i></button>
+                                                <span class="form-control text-center" id="efficiencyLevel">1</span>
+                                                <button class="btn btn-primary" type="button" onclick="gameManager.incomeManager.buyUpgrade(1)"><i class="fas fa-plus"></i> Buy</button>
                                             </div>
                                         </div>
                                     </li>
 
                                     <li class="list-group-item card">
                                         <div class="image-container">
-                                            <span class="badge rounded-pill bg-primary overlay-top-right read-more">
-                                                <a class="" title="Read more about the GE Cypress series" href="https://www.ge.com/renewableenergy/wind-energy/onshore-wind/2mw-platform" target="_blank">?</a>
-                                            </span>
                                             <img src="https://www.ge.com/renewableenergy/sites/default/files/2020-02/onshore-wind-turbine-cypress-prototype-3-1600px.jpg" class="card-img-top" alt="...">
                                         </div>
 
                                         <div class="card-body">
-                                            <h5 class="card-title">GE Cypress 6.0 - 164</h5>
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                            <h5 class="card-title">Battery Capacity</h5>
+                                            <p class="card-text">A battery stores the electricity you've produced, but there's only so much it can handle! Upgrade your battery's capacity to afford more expensive stuff.</p>
 
+                                            <div>
+                                                <p><strong>Price:</strong> <span id="capacityPrice">10</span>W</p>
+                                            </div>
                                             <div class="input-group mb-3">
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-minus-circle"></i></button>
-                                                <span class="form-control text-center"></span>
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-plus-circle"></i></button>
+                                                <span class="form-control text-center" id="capacityLevel">1</span>
+                                                <button class="btn btn-primary" type="button" onclick="gameManager.incomeManager.buyUpgrade(2)"><i class="fas fa-plus"></i> Buy</button>
                                             </div>
                                         </div>
                                     </li>
@@ -268,11 +144,11 @@
                                 <div class="card-header text-center">
                                     
                                     <button class="btn w-100 text-start" type="button" data-toggle="collapse" data-target="#onShoreTurbinesContent" aria-expanded="true" aria-controls="onShoreTurbinesContent">
-                                        <h5 class="d-inline">On-shore Turbines <i class="fas fa-angle-double-down py-1" style="float:right"></i></h5>  
+                                        <h5 class="d-inline">On-shore Turbines</h5>  
                                     </button>
                                 </div>
 
-                                <ul class="list-group list-group-flush collapse" id="onShoreTurbinesContent" data-parent="#onShoreTurbinesContentHeader">
+                                <ul class="list-group list-group-flush" id="onShoreTurbinesContent" data-parent="#onShoreTurbinesContentHeader">
                                     <li class="list-group-item card">
                                         <div class="image-container">
                                             <span class="badge rounded-pill bg-primary overlay-top-right read-more">
@@ -283,12 +159,15 @@
 
                                         <div class="card-body">
                                             <h5 class="card-title">GE 2.3 - 116</h5>
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                            <p class="card-text">GE’s reliable 2 MW platform of onshore wind turbines features can power around 1,000 homes per turbine with it's 58m log blades.</p>
 
+                                            <div>
+                                                <p><strong>Price:</strong> <span id="m2Price">10</span>W</p>
+                                                <p><strong>Produces:</strong> 2.3MW / 10 seconds</p>
+                                            </div>
                                             <div class="input-group mb-3">
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-minus-circle"></i></button>
-                                                <span class="form-control text-center"></span>
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-plus-circle"></i></button>
+                                                <span class="form-control text-center" id="m2Qty"></span>
+                                                <button class="btn btn-primary" type="button" onclick="gameManager.incomeManager.buyTurbine(0)"><i class="fas fa-plus"></i> Buy</button>
                                             </div>
                                         </div>
                                     </li>
@@ -296,19 +175,22 @@
                                     <li class="list-group-item card">
                                         <div class="image-container">
                                             <span class="badge rounded-pill bg-primary overlay-top-right read-more">
-                                                <a class="" title="Read more about the GE 3MW series" href="https://www.ge.com/renewableenergy/wind-energy/onshore-wind/2mw-platform" target="_blank">?</a>
+                                                <a class="" title="Read more about the GE 3MW series" href="https://www.ge.com/renewableenergy/wind-energy/onshore-wind/3mw-platform" target="_blank">?</a>
                                             </span>
                                             <img src="https://www.ge.com/renewableenergy/sites/default/files/2020-02/wind-onshore-meikle-3000px.jpg" class="card-img-top" alt="...">
                                         </div>
 
                                         <div class="card-body">
                                             <h5 class="card-title">GE 3.6 - 137</h5>
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                            <p class="card-text"></p>
 
+                                            <div>
+                                                <p><strong>Price:</strong> <span id="m3Price">10</span>W</p>
+                                                <p><strong>Produces:</strong> 3.6MW / 10 seconds</p>
+                                            </div>
                                             <div class="input-group mb-3">
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-minus-circle"></i></button>
-                                                <span class="form-control text-center"></span>
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-plus-circle"></i></button>
+                                                <span class="form-control text-center" id="m3Qty"></span>
+                                                <button class="btn btn-primary" type="button" onclick="gameManager.incomeManager.buyTurbine(1)"><i class="fas fa-plus"></i> Buy</button>
                                             </div>
                                         </div>
                                     </li>
@@ -323,12 +205,15 @@
 
                                         <div class="card-body">
                                             <h5 class="card-title">GE Cypress 6.0 - 164</h5>
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                            <p class="card-text">The Cypress platofrm has advanced the proven technology of GE's 2 and 3 MW fleets to be able to produce over 20GWh per year.</p>
 
+                                            <div>
+                                                <p><strong>Price:</strong> <span id="cypress6Price"></span>W</p>
+                                                <p><strong>Produces:</strong> 6MW / 10 seconds</p>
+                                            </div>
                                             <div class="input-group mb-3">
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-minus-circle"></i></button>
-                                                <span class="form-control text-center"></span>
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-plus-circle"></i></button>
+                                                <span class="form-control text-center" id="cypress6Qty"></span>
+                                                <button class="btn btn-primary" type="button" onclick="gameManager.incomeManager.buyTurbine(2)"><i class="fas fa-plus"></i> Buy</button>
                                             </div>
                                         </div>
                                     </li>
@@ -338,11 +223,11 @@
                             <div class="card m-2" id="offShoreTurbinesContentHeader">
                                 <div class="card-header text-center">
                                     <button class="btn w-100 text-start" type="button" data-toggle="collapse" data-target="#offShoreTurbinesContent" aria-expanded="true" aria-controls="offShoreTurbinesContent">
-                                        <h5 class="d-inline">Off-shore Turbines <i class="fas fa-angle-double-down py-1" style="float:right"></i></h5>  
+                                        <h5 class="d-inline">Off-shore Turbines</h5>  
                                     </button>
                                 </div>
 
-                                <ul class="list-group list-group-flush collapse" id="offShoreTurbinesContent" data-parent="#offShoreTurbinesContentHeader">
+                                <ul class="list-group list-group-flush" id="offShoreTurbinesContent" data-parent="#offShoreTurbinesContentHeader">
                                     <li class="list-group-item card">
                                         <div class="image-container">
                                             <span class="badge rounded-pill bg-primary overlay-top-right read-more">
@@ -353,12 +238,15 @@
                                         
                                         <div class="card-body">
                                             <h5 class="card-title">GE Halide 150 - 6MW</h5>
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                            <p class="card-text">With it's 150m diameter rotor, the Halide 150 can delivier power while being more compact and lightweight than earlier generations.</p>
 
+                                            <div>
+                                                <p><strong>Price:</strong> <span id="halide150Price">10</span>W</p>
+                                                <p><strong>Produces:</strong> 6MW / 10 seconds</p>
+                                            </div>
                                             <div class="input-group mb-3">
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-minus-circle"></i></button>
-                                                <span class="form-control text-center"></span>
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-plus-circle"></i></button>
+                                                <span class="form-control text-center" id="halide150Qty"></span>
+                                                <button class="btn btn-primary" type="button" onclick="gameManager.incomeManager.buyTurbine(3)"><i class="fas fa-plus"></i> Buy</button>
                                             </div>
                                         </div>
                                     </li>
@@ -373,12 +261,15 @@
 
                                          <div class="card-body">
                                             <h5 class="card-title">GE Halide-X</h5>
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                            <p class="card-text">The worlds powerful offshore wind turbine in operation. This massive turbine can power a UK household for 2 days... per rotation.</p>
 
+                                            <div>
+                                                <p><strong>Price:</strong> <span id="halideXPrice">10</span>W</p>
+                                                <p><strong>Produces:</strong> 14MW / 10 seconds</p>
+                                            </div>
                                             <div class="input-group mb-3">
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-minus-circle"></i></button>
-                                                <span class="form-control text-center" id=""></span>
-                                                <button class="btn btn-primary" type="button"><i class="fas fa-plus-circle"></i></button>
+                                                <span class="form-control text-center" id="halideXQty"></span>
+                                                <button class="btn btn-primary" type="button" onclick="gameManager.incomeManager.buyTurbine(4)"><i class="fas fa-plus"></i> Buy</button>
                                             </div>
                                         </div>
                                     </li>
@@ -390,51 +281,13 @@
             </div>
 
             <script>
-                class EventManager{
-                    constructor(){
-                        this.changeState(new Event("None", "Nothing weird is going on at the moment!", "There is nothing going on at the moment, revisit this page when an event takes place!"));
-                    }
-
-                    changeState(newState){
-                        this.state = newState;
-
-                        $("#eventName").innerHTML = this.state.name;
-                        $("#eventDescription").innerHTML = this.state.description;
-                        $("#eventShortDescription").innerHTML = this.state.shortDescription;
-                    }
-                }
-
-                class Event{
-                    constructor(name, shortDescription, description){
-                        this.name = name;
-                        this.shortDescription = shortDescription;
-                        this.description = description;
-                    }
-                }
-
-
+                var gameManager;
                 window.onload = function() {
-                    init();
+                    var incomeManager = new IncomeManager(0, 0);
+                    gameManager = new GameManager(incomeManager);
+
+                    gameManager.init();
                 };
-
-                function init(){
-                    console.log("Loading...");
-
-                    $('#eventInfoContainer').hide();
-                    $('#instructions').modal('show');
-
-                    console.log("Loaded!");
-
-                    window.setInterval(function(){
-
-                    }, 200);
-                }
-
-                function main(){
-
-                }
-
-                
 
             </script>
         </div>
